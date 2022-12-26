@@ -1,0 +1,4 @@
+monzo-api
+psycopg2
+plaid-python
+notion-df
