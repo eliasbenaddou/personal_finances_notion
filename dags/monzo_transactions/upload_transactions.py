@@ -101,12 +101,12 @@ class UploadTransactions:
         db_ids_lst = db_transactions["ID"].tolist()
 
         new_transaction_ids = []
-        for item in self.transactions_df["ID"].tolist():
+        for item in self.transactions_df["id"].tolist():
             if item not in db_ids_lst:
                 new_transaction_ids.append(item)
 
         self.transactions_to_upload = self.transactions_df[
-            self.transactions_df["ID"].isin(new_transaction_ids)
+            self.transactions_df["id"].isin(new_transaction_ids)
         ].reset_index(drop=True)
 
         self.transactions_to_upload["Merchant"] = np.where(
@@ -141,7 +141,8 @@ class UploadTransactions:
             "amount",
             "category",
             "Notes",
-            "Merchant" "emoji",
+            "Merchant",
+            "emoji",
             "Year",
             "Month",
             "Day",
