@@ -119,7 +119,7 @@ class UploadTransactions:
             "amount"
         ].apply(lambda x: round(x, 2))
 
-        self.transactions_to_upload["category"].replace(EMOJI_MAP, inplace=True)
+        self.transactions_to_upload["emoji"].replace(EMOJI_MAP, inplace=True)
 
         self.transactions_to_upload["Notes"] = np.where(
             self.transactions_to_upload["notes"].isnull(),

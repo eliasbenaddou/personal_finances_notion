@@ -15,4 +15,7 @@ cat_dict = {
     "category_0000ANMJlLyk1nWxbm7CzZ": "Interest",
     "category_0000AOM4UdpOxXQ6sTkmH3": "Travel",
     "category_0000AOM443QFgy5eRFJQH6": "Hotels",
+    "transfers": "Transfers",
+    "savings": "Savings",
+    "interest": "Interest",
 }
