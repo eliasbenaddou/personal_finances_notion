@@ -7,14 +7,35 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+EMOJI_MAP = {
+    "pets": "🐱",
+    "groceries": "🍏",
+    "clothes": "👕",
+    "stocks": "📉",
+    "healthcare": "💊",
+    "bills": "🔌",
+    "education": "📚",
+    "shopping": "💳",
+    "fees": "💸",
+    "holidays": "🏖",
+    "home": "🏠",
+    "gym": "🏋️‍♀️",
+    "entertainment": "🎮",
+    "gifts": "🎁",
+    "eating_out": "🍝",
+    "subscriptions": "📆",
+    "transport": "🚇",
+    "travel": "🚀",
+    "hotels": "🏩",
+    "withdrawals": "💳",
+    "": "❓",
+}
+
 
 class UploadTransactions:
     """Class to manage uploading transactions to a Notion database"""
 
-    def __init__(
-        self,
-        transactions_df
-    ):
+    def __init__(self, transactions_df):
         """
         Initialise UploadTransactions
 
@@ -35,7 +56,8 @@ class UploadTransactions:
             Dataframe of existing transactions in database
         """
         db_transactions = ndf.download(
-            notion_url=os.getenv("NOTION_MONZO_TRANSACTIONS_DB_URL"), api_key=os.getenv("NOTION_API_KEY")
+            notion_url=os.getenv("NOTION_MONZO_TRANSACTIONS_DB_URL"),
+            api_key=os.getenv("NOTION_API_KEY"),
         )
 
         return db_transactions
@@ -62,7 +84,9 @@ class UploadTransactions:
             data: Dataframe of transactions that are to be inserted
         """
         ndf.upload(
-            df=data, notion_url=os.getenv("NOTION_MONZO_TRANSACTIONS_DB_URL"), api_key=os.getenv("NOTION_API_KEY")
+            df=data,
+            notion_url=os.getenv("NOTION_MONZO_TRANSACTIONS_DB_URL"),
+            api_key=os.getenv("NOTION_API_KEY"),
         )
 
     def get_new_transactions(self):
@@ -84,6 +108,56 @@ class UploadTransactions:
         self.transactions_to_upload = self.transactions_df[
             self.transactions_df["ID"].isin(new_transaction_ids)
         ].reset_index(drop=True)
+
+        self.transactions_to_upload["Merchant"] = np.where(
+            self.transactions_to_upload["merchant_description"].isnull(),
+            self.transactions_to_upload["description"],
+            self.transactions_to_upload["merchant_description"],
+        )
+
+        self.transactions_to_upload["amount"] = self.transactions_to_upload[
+            "amount"
+        ].apply(lambda x: round(x, 2))
+
+        self.transactions_to_upload["category"].replace(EMOJI_MAP, inplace=True)
+
+        self.transactions_to_upload["Notes"] = np.where(
+            self.transactions_to_upload["notes"].isnull(),
+            self.transactions_to_upload["suggested_tags"],
+            self.transactions_to_upload["notes"],
+        )
+
+        self.transactions_to_upload["Year"] = self.transactions_to_upload[
+            "date"
+        ].dt.year
+        self.transactions_to_upload["Month"] = self.transactions_to_upload[
+            "date"
+        ].dt.month
+        self.transactions_to_upload["Day"] = self.transactions_to_upload["date"].dt.day
+
+        schema = [
+            "id",
+            "date",
+            "amount",
+            "category",
+            "Notes",
+            "Merchant" "emoji",
+            "Year",
+            "Month",
+            "Day",
+        ]
+        self.transactions_to_upload = self.transactions_to_upload[schema]
+
+        self.transactions_to_upload.rename(
+            columns={
+                "id": "ID",
+                "date": "Date",
+                "amount": "Amount",
+                "category": "Category",
+                "emoji": "Emoji",
+            },
+            inplace=True,
+        )
 
         return self.transactions_to_upload
 

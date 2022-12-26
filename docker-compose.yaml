@@ -73,13 +73,13 @@ x-airflow-common:
 services:
   postgres:
     image: postgres:13
-    container_name: airflow-metadb
+    container_name: airflow-metadb-notion
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
     volumes:
-      - airflow-metadb-volume:/var/lib/postgresql/data
+      - airflow-metadb-volume-notion:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 5s
@@ -89,7 +89,7 @@ services:
   airflow-webserver:
     <<: *airflow-common
     command: webserver
-    container_name: webserver
+    container_name: webserver-notion
     ports:
       - 8080:8080
     healthcheck:
@@ -106,7 +106,7 @@ services:
   airflow-scheduler:
     <<: *airflow-common
     command: scheduler
-    container_name: scheduler
+    container_name: scheduler-notion
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"']
       interval: 10s
@@ -210,4 +210,4 @@ services:
       - airflow
 
 volumes:
-  airflow-metadb-volume:
+  airflow-metadb-volume-notion:

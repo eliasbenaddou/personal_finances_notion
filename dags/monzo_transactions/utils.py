@@ -80,12 +80,3 @@ def get_date_periods(created_date):
             date_tuple_lst.append((dates[-2], dates[-1]))
             break
     return date_tuple_lst
-
-
-TODAY = datetime.today().date()
-PAST_THREE_MONTHS = datetime.today() - timedelta(days=89)
-TOKENS = "/home/ubuntu/airflow/dags/monzo_transactions/tokens"
-TRANSACTIONS_JSON = "/home/ubuntu/airflow/dags/monzo_transactions/transactions.json"
-CLIENT_ID = os.environ.get("CLIENT_ID")
-CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
-REDIRECT_URI = "http://127.0.0.1/monzo"
