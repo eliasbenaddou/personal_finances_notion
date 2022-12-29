@@ -28,6 +28,7 @@ EMOJI_MAP = {
     "travel": "🚀",
     "hotels": "🏩",
     "withdrawals": "💳",
+    "transfers": "💸",
     "": "❓",
 }
 
@@ -119,7 +120,12 @@ class UploadTransactions:
             "amount"
         ].apply(lambda x: round(x, 2))
 
-        self.transactions_to_upload["emoji"].replace(EMOJI_MAP, inplace=True)
+        for category, emoji in EMOJI_MAP.items():
+            self.transactions_to_upload["emoji"] = np.where(
+                self.transactions_to_upload["category"] == category,
+                emoji,
+                self.transactions_to_upload["emoji"],
+            )
 
         self.transactions_to_upload["Notes"] = np.where(
             self.transactions_to_upload["notes"].isnull(),
